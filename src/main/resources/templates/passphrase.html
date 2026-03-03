@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Random Passphrase</title>
+</head>
+
+<body>
+
+  <ul>
+   <li th:each="word : ${words}"
+       th:text="${word}">No passphrase generated</li>
+  </ul>
+
+</body>
+
+</html>

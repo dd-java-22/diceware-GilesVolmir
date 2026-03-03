@@ -1,19 +1,25 @@
 package edu.cnm.deepdive.diceware.controller;
 
 import edu.cnm.deepdive.diceware.service.PassphraseService;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.Max;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-@RestController
+@Controller
 @RequestMapping("/passphrases")
 @Validated
 public class PassphraseController {
@@ -26,6 +32,7 @@ public class PassphraseController {
   }
 
   @PostMapping(path = "/generate", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
   public List<String> post(
       @Max(20)
       @RequestParam(defaultValue = "5")
@@ -35,6 +42,7 @@ public class PassphraseController {
   }
 
   @PostMapping(path = "/generate", produces = MediaType.TEXT_PLAIN_VALUE)
+  @ResponseBody
   public String post(
       @Max(20)
       @RequestParam(defaultValue = "5")
@@ -44,5 +52,16 @@ public class PassphraseController {
       String delimiter
   ) {
     return String.join(delimiter, service.generate(length));
+  }
+
+  @GetMapping(path = "/passphrase")
+  public String get(
+      @Max(20)
+      @RequestParam(defaultValue = "5")
+      int length,
+      Model model
+  ) {
+    model.addAttribute("words", service.generate(length));
+    return "passphrase";
   }
 }
